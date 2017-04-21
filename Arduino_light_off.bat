@@ -1,0 +1,1 @@
+echo|set /p=0 > COM3
