@@ -1,14 +1,18 @@
+// Pins
 const int ledPin = 3;
 const int resistorPin = A0;
 const int infraredPin = 2;
 
+// ADC control
 const int SWING_RANGE = 10;
 const int MV_SIZE = 5;
+
+// ADC variable
 int valueSum = 0;
 int values[MV_SIZE];
 int lastValue = -1;
-bool light_on = false;
 
+// To On/Off/Remain
 enum LightCommand{On, Off, Remain};
 
 void setup() {
@@ -23,10 +27,11 @@ void loop() {
   
   if (lightCommand==Off) {
     analogWrite(ledPin, 0);
+    Serial.println("Switched off");
   }
   else if (lightCommand==On || (abs(valueSum - lastValue) > SWING_RANGE)) {
     analogWrite(ledPin, valueSum/2);
-    Serial.println("Switched");
+    Serial.println("Switched on");
   }
   
   lastValue = valueSum;
@@ -40,15 +45,14 @@ LightCommand check_light_status() {
       return On;
     }
     else {
-      Serial.println("off");
+      Serial.println("command off");
       return Off;             
     }
   } else if ( abs(valueSum - lastValue) > SWING_RANGE ) {
     Serial.println("range on");
-    Serial.println(valueSum);
     return On;    
   } else if (valueSum < 10) {
-    Serial.println("off");
+    Serial.println("value off");
     return Off;    
   }
 
