@@ -27,14 +27,15 @@ void loop() {
   
   if (lightCommand==Off) {
     analogWrite(ledPin, 0);
-    Serial.println("Switched off");
+    lastValue = valueSum;
+    Serial.println("Switched off");    
+    delay(200);
   }
   else if (lightCommand==On || (abs(valueSum - lastValue) > SWING_RANGE)) {
     analogWrite(ledPin, valueSum/2);
+    lastValue = valueSum;
     Serial.println("Switched on");
-  }
-  
-  lastValue = valueSum;
+  }  
 }
 
 LightCommand check_light_status() {
@@ -49,6 +50,8 @@ LightCommand check_light_status() {
       return Off;             
     }
   } else if ( abs(valueSum - lastValue) > SWING_RANGE ) {
+    Serial.println(valueSum);
+    Serial.println(lastValue);
     Serial.println("range on");
     return On;    
   } else if (valueSum < 10) {
@@ -64,7 +67,7 @@ void read_value() {
   for (int i=0 ; i<MV_SIZE ; i++){
     values[i] = analogRead(resistorPin);
     valueSum += values[i];
-    delay(20); 
+    delay(30); 
   }
 
   valueSum /= MV_SIZE;
